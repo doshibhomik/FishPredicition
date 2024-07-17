@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Species Classification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Fish Species Classification</h1>
+        <div class="separator"></div>
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='fish.png') }}" alt="Fish Image" class="fish-image" id="fishImage">
+            <div class="result" id="result"></div>
+        </div>
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="length1">Length1 (cm)</label>
+                <input type="text" id="length1" name="length1" placeholder="Enter Length1">
+            </div>
+            <div class="form-group">
+                <label for="length2">Length2 (cm)</label>
+                <input type="text" id="length2" name="length2" placeholder="Enter Length2">
+            </div>
+            <div class="form-group">
+                <label for="length3">Length3 (cm)</label>
+                <input type="text" id="length3" name="length3" placeholder="Enter Length3">
+            </div>
+            <div class="form-group">
+                <label for="height">Height (cm)</label>
+                <input type="text" id="height" name="height" placeholder="Enter Height">
+            </div>
+            <div class="form-group">
+                <label for="width">Width (cm)</label>
+                <input type="text" id="width" name="width" placeholder="Enter Width">
+            </div>
+            <button type="button" onclick="classifyFish()">Classify Fish</button>
+        </form>
+    </div>
+    <script>
+        async function classifyFish() {
+            const length1 = document.getElementById('length1').value;
+            const length2 = document.getElementById('length2').value;
+            const length3 = document.getElementById('length3').value;
+            const height = document.getElementById('height').value;
+            const width = document.getElementById('width').value;
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    length1: parseFloat(length1),
+                    length2: parseFloat(length2),
+                    length3: parseFloat(length3),
+                    height: parseFloat(height),
+                    width: parseFloat(width)
+                })
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerText = result.species;
+            document.getElementById('fishImage').src = result.image_url;
+        }
+    </script>
+</body>
+</html>
